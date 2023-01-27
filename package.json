@@ -1,0 +1,16 @@
+{
+  "name": "twitch-chatbot-baot",
+  "version": "1.0.0",
+  "description": "Just a chat mod bot",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Komezu",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "tmi.js": "^1.8.5"
+  }
+}
