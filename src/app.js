@@ -1,5 +1,6 @@
 import { Client } from 'tmi.js';
 import { OPTIONS } from './options.js'
+import command from './commands.js';
 import * as helpers from './helpers.js';
 
 const client = new Client(OPTIONS);
@@ -32,8 +33,9 @@ client.on('message', (channel, tags, message, self) => {
     }
   }
 
-  // Test command: check if bot is in chat
-  if (message === '!bot') {
-    client.say(channel, 'Bot is here!');
+  const botReply = command(channel, tags, message);
+
+  if (botReply) {
+    client.say(channel, botReply);
   }
 });
