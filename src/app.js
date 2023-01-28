@@ -2,17 +2,26 @@ import { Client } from 'tmi.js';
 import { OPTIONS } from './options.js'
 import command from './commands.js';
 import * as helpers from './helpers.js';
+import easterEgg from './easter-egg.js';
 
 const client = new Client(OPTIONS);
 client.connect();
 
-client.on('join', (_channel, username, self) => {
+client.on('join', (channel, username, self) => {
   // Ignore bot joining
   if (self) return;
+  // Ignore channel owner joining
+  if (username === channel.substring(1)) return;
+
   // Log new user's name
   console.log(`@${username} joined your channel`);
   // Play chat joining sound
   helpers.playJoinSound();
+
+  // Temporary easter egg!
+  if (username in easterEgg) {
+    client.say(channel, `Uh-oh! @${username} has invaded this channel!`);
+  }
 });
 
 client.on('message', (channel, tags, message, self) => {
