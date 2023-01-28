@@ -1,63 +1,39 @@
-require('dotenv').config();
+import { Client } from 'tmi.js';
+import { OPTIONS } from './options.js'
+import * as helpers from './helpers.js';
 
-const tmi = require('tmi.js');
-const sound = require('sound-play');
-const { BLOCKED_WORDS } = require('./constants');
-
-const options = {
-  options: { debug: true },
-	identity: {
-		username: process.env.BOT_USERNAME,
-		password: `oauth:${process.env.OAUTH_TOKEN}`
-	},
-	channels: [ process.env.CHANNEL_NAME ]
-}
-
-const client = new tmi.Client(options);
-
+const client = new Client(OPTIONS);
 client.connect();
 
-client.on('join', (channel, username, self) => {
+client.on('join', (_channel, username, self) => {
   // Ignore bot joining
   if (self) return;
-
+  // Log new user's name
+  console.log(`@${username} joined your channel`);
   // Play chat joining sound
-  playJoinSound(username);
+  helpers.playJoinSound();
 });
 
-client.on('message', (channel, userstate, message, self) => {
+client.on('message', (channel, tags, message, self) => {
 	// Ignore echoed messages
 	if(self) return;
 
-  // Allow bypass of blocked words for bot itself
-  if (userstate.username === process.env.BOT_USERNAME) return;
+  // Allow bot to bypass blocked words
+  if (tags.username !== process.env.BOT_USERNAME) {
+    // Check if message contains blocked words
+    if (helpers.containsBlockedWord(message)) {
+      // Delete message
+      client.deletemessage(channel, tags.id)
+        .then(() => {
+          // Tell user message was deleted
+          client.say(channel, `Sorry @${tags.username}, your message was deleted as it contained a blocked word.`);
+        })
+        .catch(err => console.log(err));
+    }
+  }
 
+  // Test command: check if bot is in chat
   if (message === '!bot') {
     client.say(channel, 'Bot is here!');
   }
-
-  // Monitor and delete messages with blocked words
-  checkTwitchChat(channel, userstate, message);
 });
-
-function checkTwitchChat(channel, userstate, message) {
-  // Check if message contains blocked word
-  message = message.toLowerCase();
-  const shouldDeleteMessage = BLOCKED_WORDS.some(blockedWord => message.includes(blockedWord.toLowerCase()));
-
-  if (shouldDeleteMessage) {
-    // Delete message
-    client.deletemessage(channel, userstate.id)
-      .then(() => {
-        // Tell user message was deleted
-        client.say(channel, `Sorry @${userstate.username}, your message was deleted. Don't say bad words!`);
-      })
-      .catch(err => console.log(err));
-  }
-}
-
-function playJoinSound(username) {
-  sound.play(`${__dirname}/../sound-files/magic-mallet.mp3`)
-    .then(() => console.log(username))
-    .catch(err => console.log(err));
-}
