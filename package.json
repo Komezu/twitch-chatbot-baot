@@ -1,7 +1,7 @@
 {
-  "name": "twitch-chatbot-baot",
+  "name": "twitch-chatbot-kohibeanbot",
   "version": "1.0.0",
-  "description": "Just a chat mod bot",
+  "description": "A chat mod bot for Twitch",
   "main": "src/app.js",
   "scripts": {
     "start": "nodemon .",
