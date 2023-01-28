@@ -2,7 +2,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import sound from 'sound-play';
-import { BLOCKED_WORDS } from './constants.js';
+import { BLOCKED_WORDS, COMMANDS } from './constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,5 +16,10 @@ export function playJoinSound() {
 
 export function containsBlockedWord(message) {
   message = message.toLowerCase();
-  return BLOCKED_WORDS.some(blockedWord => message.includes(blockedWord.toLowerCase()));
+  return BLOCKED_WORDS.some(blockedWord => message.includes(blockedWord));
 }
+
+// export function isCommand(message) {
+//   message = message.toLowerCase();
+//   return COMMANDS.some(command => message.includes(command));
+// }
