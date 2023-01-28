@@ -1,6 +1,4 @@
-const BLOCKED_WORDS = [
+export const BLOCKED_WORDS = [
   'fakeword',
   'testword'
 ];
-
-module.exports = { BLOCKED_WORDS };
