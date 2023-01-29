@@ -3,9 +3,9 @@ export const BLOCKED_WORDS = [
   'testword'
 ];
 
-
 export const COMMANDS = [
   '!bot',
   '!commands',
-  '!help'
+  '!help',
+  '!recolorbot'
 ]

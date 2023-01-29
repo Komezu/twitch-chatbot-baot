@@ -42,8 +42,8 @@ client.on('message', (channel, tags, message, self) => {
     }
   }
 
+  // Make bot reply if message is a command
   const botReply = command(channel, tags, message);
-
   if (botReply) {
     client.say(channel, botReply);
   }
