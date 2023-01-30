@@ -11,6 +11,7 @@ export default class Chatbot extends Client {
       '!bot': this.bot,
       '!commands': this.commands,
       '!help': this.help,
+      '!randomnum': this.randomNum,
       '!recolorbot': this.recolorBot
     }
   }
@@ -33,6 +34,10 @@ export default class Chatbot extends Client {
 
   help = (channel) => {
     this.say(channel, `Available commands are: ${allCommands}`);
+  }
+
+  randomNum = (channel) => {
+    this.say(channel, `Number generated: ${Math.floor(Math.random() * 100) + 1}`);
   }
 
   recolorBot = (channel) => {
