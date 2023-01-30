@@ -7,6 +7,7 @@ export const COMMANDS = [
   '!bot',
   '!commands',
   '!help',
+  '!randomnum',
   '!recolorbot'
 ]
 
