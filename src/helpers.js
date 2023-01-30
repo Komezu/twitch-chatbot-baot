@@ -7,7 +7,7 @@ import { BLOCKED_WORDS, COMMANDS } from './constants.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export function playJoinSound() {
+export function playFirstMessageSound() {
   // Set volume: default is 0.5, max is 1
   const volume = 0.25;
   sound.play(`${__dirname}/../sound-files/magic-mallet.mp3`, volume)

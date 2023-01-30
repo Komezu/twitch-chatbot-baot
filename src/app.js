@@ -14,8 +14,6 @@ chatbot.on('join', (channel, username, self) => {
 
   // Log new user's name in console
   console.log(`@${username} joined ${channel}`);
-  // Play chat joining sound
-  helpers.playJoinSound();
 
   // Temporary easter egg!
   if (username in easterEgg) {
@@ -25,22 +23,28 @@ chatbot.on('join', (channel, username, self) => {
 
 chatbot.on('message', (channel, tags, message, self) => {
 	// Ignore echoed messages
-	if(self) return;
+	if(self || tags.username === OPTIONS.identity.username) return;
 
-  // Allow bot to bypass blocked words
-  if (tags.username !== OPTIONS.identity.username) {
-    // Check if message contains blocked words
-    if (helpers.containsBlockedWord(message)) {
-      // Delete message
-      chatbot.deletemessage(channel, tags.id)
-        .then(() => {
-          // Tell user message was deleted
-          chatbot.say(channel, `Sorry @${tags.username}, your message was deleted as it contained a blocked word.`);
-        })
-        .catch(err => console.log(err));
-    }
+  // Add message to user's count and check if first of session
+  if (chatbot.tallyAndFlagFirst(channel, tags.username)) {
+    // Play sound if first
+    helpers.playFirstMessageSound();
+    chatbot.say(channel, `Welcome to the channel, ${tags.username}! Type "!commands" for a list of chatbot commands.`)
   }
 
-  // Execute command if message is command
-  chatbot.runCommand(channel, message);
+  // Check if message contains blocked words
+  if (helpers.containsBlockedWord(message)) {
+    // Delete message
+    chatbot.deletemessage(channel, tags.id)
+      .then(() => {
+        // Tell user message was deleted
+        chatbot.say(channel, `Sorry @${tags.username}, your message was deleted as it contained a blocked word.`);
+      })
+      .catch(err => console.log(err));
+  }
+});
+
+chatbot.on('chat', (channel, _tags, message, _self) => {
+  // Execute command if available (not called on actions and whispers)
+  chatbot.runCommand(channel, message.toLowerCase());
 });
