@@ -1,50 +1,46 @@
-import { Client } from 'tmi.js';
-import { OPTIONS } from './options.js'
-import command from './commands.js';
+import Chatbot from './chatbot.js';
+import OPTIONS from './options.js'
 import * as helpers from './helpers.js';
 import easterEgg from './easter-egg.js';
 
-const client = new Client(OPTIONS);
-client.connect();
+const chatbot = new Chatbot(OPTIONS);
+chatbot.connect();
 
-client.on('join', (channel, username, self) => {
+chatbot.on('join', (channel, username, self) => {
   // Ignore bot joining
   if (self) return;
   // Ignore channel owner joining
   if (username === channel.substring(1)) return;
 
-  // Log new user's name
-  console.log(`@${username} joined your channel`);
+  // Log new user's name in console
+  console.log(`@${username} joined ${channel}`);
   // Play chat joining sound
   helpers.playJoinSound();
 
   // Temporary easter egg!
   if (username in easterEgg) {
-    client.say(channel, `Uh-oh! @${username} has invaded this channel!`);
+    chatbot.say(channel, `Hey @${channel.substring(1)}! Your friend @${username} just joined the chat!`);
   }
 });
 
-client.on('message', (channel, tags, message, self) => {
+chatbot.on('message', (channel, tags, message, self) => {
 	// Ignore echoed messages
 	if(self) return;
 
   // Allow bot to bypass blocked words
-  if (tags.username !== process.env.BOT_USERNAME) {
+  if (tags.username !== OPTIONS.identity.username) {
     // Check if message contains blocked words
     if (helpers.containsBlockedWord(message)) {
       // Delete message
-      client.deletemessage(channel, tags.id)
+      chatbot.deletemessage(channel, tags.id)
         .then(() => {
           // Tell user message was deleted
-          client.say(channel, `Sorry @${tags.username}, your message was deleted as it contained a blocked word.`);
+          chatbot.say(channel, `Sorry @${tags.username}, your message was deleted as it contained a blocked word.`);
         })
         .catch(err => console.log(err));
     }
   }
 
-  // Make bot reply if message is a command
-  const botReply = command(channel, tags, message);
-  if (botReply) {
-    client.say(channel, botReply);
-  }
+  // Execute command if message is command
+  chatbot.runCommand(channel, message);
 });

@@ -18,8 +18,3 @@ export function containsBlockedWord(message) {
   message = message.toLowerCase();
   return BLOCKED_WORDS.some(blockedWord => message.includes(blockedWord));
 }
-
-// export function isCommand(message) {
-//   message = message.toLowerCase();
-//   return COMMANDS.some(command => message.includes(command));
-// }
