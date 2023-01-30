@@ -3,9 +3,27 @@ export const BLOCKED_WORDS = [
   'testword'
 ];
 
-
 export const COMMANDS = [
   '!bot',
   '!commands',
-  '!help'
+  '!help',
+  '!recolorbot'
+]
+
+export const COLORS = [
+  'Blue',
+  'BlueViolet',
+  'CadetBlue',
+  'Chocolate',
+  'Coral',
+  'DodgerBlue',
+  'Firebrick',
+  'GoldenRod',
+  'Green',
+  'HotPink',
+  'OrangeRed',
+  'Red',
+  'SeaGreen',
+  'SpringGreen',
+  'YellowGreen'
 ]

@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export const OPTIONS = {
+export default {
   options: { debug: true },
   connection: {
     reconnect: true,
