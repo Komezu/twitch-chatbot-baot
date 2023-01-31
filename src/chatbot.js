@@ -33,7 +33,7 @@ export default class Chatbot extends Client {
       this.messageCount[channel][username]++;
     }
     // Return whether it was user's first message on channel for this session
-    return first
+    return first;
   }
 
   runCommand(channel, message) {
