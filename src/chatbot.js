@@ -1,5 +1,5 @@
 import { Client } from 'tmi.js';
-import axios from 'axios';
+import * as helpers from './helpers.js';
 import { COMMANDS, COLORS } from './constants.js';
 
 const allCommands = COMMANDS.join(', ');
@@ -41,8 +41,9 @@ export default class Chatbot extends Client {
     if (message in this.commandMethods) this.commandMethods[message](channel);
   }
 
-  // Command methods
-  // Note: need to use arrow functions to avoid changing scope of 'this'
+  // =============================== Command Methods ===============================
+  //       Note: Need to use arrow functions to avoid changing scope of 'this'
+  // ===============================================================================
 
   bot = (channel) => {
     this.action(channel, '(bot in training) is here!');
@@ -53,18 +54,26 @@ export default class Chatbot extends Client {
   }
 
   game = (channel) => {
-    const url = `https://api.twitch.tv/helix/streams?type=live&user_login=${channel.substring(1)}`
-    axios.get(url, {
-      headers: {
-        'Authorization': `Bearer ${process.env.OAUTH_TOKEN}`,
-        'Client-Id': process.env.CLIENT_ID
-      }
-    })
-      .then((response) => {
-        const gameName = response.data.data[0].game_name;
-        this.say(channel, `Currently playing: ${gameName}`);
+    // Get game name, then game IGDB id, then game summary
+    helpers.getGameName(channel)
+      .then((name) => {
+        if (name) {
+          this.say(channel, `Currently playing: ${name}`);
+        } else {
+          throw new Error;
+        }
+        // Explicitly return name value to use it in next promise
+        return helpers.getIGDBId(name);
       })
-      .catch(() => this.action(channel, `could not get info on the game.`));
+      .then(id => helpers.getGameSummary(id))
+      .then((summary) => {
+        if (summary) {
+          this.say(channel, `Game summary: ${summary}`);
+        } else {
+          throw new Error;
+        }
+      })
+      .catch(() => this.action(channel, 'could not get the summary of the game.'));
   }
 
   help = (channel) => {
