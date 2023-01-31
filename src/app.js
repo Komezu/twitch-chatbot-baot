@@ -29,7 +29,7 @@ chatbot.on('message', (channel, tags, message, self) => {
   if (chatbot.tallyAndFlagFirst(channel, tags.username)) {
     // Play sound if first
     helpers.playFirstMessageSound();
-    chatbot.say(channel, `Welcome to the channel, ${tags.username}! Type "!commands" for a list of chatbot commands.`)
+    chatbot.say(channel, `Welcome to the channel, ${tags.username}! Type !commands for a list of chatbot commands.`)
   }
 
   // Check if message contains blocked words

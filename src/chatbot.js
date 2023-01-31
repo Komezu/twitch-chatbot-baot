@@ -1,4 +1,5 @@
 import { Client } from 'tmi.js';
+import axios from 'axios';
 import { COMMANDS, COLORS } from './constants.js';
 
 const allCommands = COMMANDS.join(', ');
@@ -10,6 +11,7 @@ export default class Chatbot extends Client {
     this.commandMethods = {
       '!bot': this.bot,
       '!commands': this.commands,
+      '!game': this.game,
       '!help': this.help,
       '!randomnum': this.randomNum,
       '!recolorbot': this.recolorBot
@@ -31,7 +33,7 @@ export default class Chatbot extends Client {
       this.messageCount[channel][username]++;
     }
     // Return whether it was user's first message on channel for this session
-    return first
+    return first;
   }
 
   runCommand(channel, message) {
@@ -50,6 +52,21 @@ export default class Chatbot extends Client {
     this.say(channel, `Available commands are: ${allCommands}`);
   }
 
+  game = (channel) => {
+    const url = `https://api.twitch.tv/helix/streams?type=live&user_login=${channel.substring(1)}`
+    axios.get(url, {
+      headers: {
+        'Authorization': `Bearer ${process.env.OAUTH_TOKEN}`,
+        'Client-Id': process.env.CLIENT_ID
+      }
+    })
+      .then((response) => {
+        const gameName = response.data.data[0].game_name;
+        this.say(channel, `Currently playing: ${gameName}`);
+      })
+      .catch(() => this.action(channel, `could not get info on the game.`));
+  }
+
   help = (channel) => {
     this.say(channel, `Available commands are: ${allCommands}`);
   }
@@ -62,6 +79,6 @@ export default class Chatbot extends Client {
     const color = COLORS[Math.floor(Math.random()*COLORS.length)];
     this.color(color)
       .then(response => this.action(channel, `was recolored to ${response}!`))
-      .catch(err => console.log(err));
+      .catch(() => this.action(channel, `was not recolored successfully.`));
   }
 }

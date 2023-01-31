@@ -6,6 +6,7 @@ export const BLOCKED_WORDS = [
 export const COMMANDS = [
   '!bot',
   '!commands',
+  '!game',
   '!help',
   '!randomnum',
   '!recolorbot'
