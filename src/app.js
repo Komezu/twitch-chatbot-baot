@@ -4,7 +4,9 @@ import * as helpers from './helpers.js';
 import easterEgg from './easter-egg.js';
 
 const chatbot = new Chatbot(OPTIONS);
-chatbot.connect();
+chatbot.connect()
+  .then(() => chatbot.generateChatLogs(OPTIONS.channels))
+  .catch(err => console.log(err));
 
 chatbot.on('join', (channel, username, self) => {
   // Ignore bot joining
@@ -22,8 +24,10 @@ chatbot.on('join', (channel, username, self) => {
 });
 
 chatbot.on('message', (channel, tags, message, self) => {
+  chatbot.writeToChatLog(channel, tags.username, tags['tmi-sent-ts'], message);
+
 	// Ignore echoed messages
-	if(self || tags.username === OPTIONS.identity.username) return;
+	if(self || tags.username === chatbot.getUsername()) return;
 
   // Add message to user's count and check if first of session
   if (chatbot.tallyAndFlagFirst(channel, tags.username)) {
