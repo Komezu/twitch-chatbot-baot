@@ -35,6 +35,18 @@ export default class Chatbot extends Client {
     })
   }
 
+  writeToChatLog(channel, username, timestamp, message) {
+    const path = this.chatLogPaths[channel];
+    if (username === this.username) {
+      // Set a delay of 100ms to make sure bot reply always logged after command
+      setTimeout(() => {
+        helpers.logChatMessage(path, username, timestamp, message);
+      }, 100);
+    } else {
+      helpers.logChatMessage(path, username, timestamp, message);
+    }
+  }
+
   tallyAndFlagFirst(channel, username) {
     let first = false;
     if (!(username in this.messageCount[channel])) {

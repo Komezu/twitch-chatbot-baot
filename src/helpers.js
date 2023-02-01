@@ -2,6 +2,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import fs from 'fs';
+import { DateTime } from 'luxon';
 import sound from 'sound-play';
 import axios from 'axios';
 import { BLOCKED_WORDS } from './constants.js';
@@ -10,16 +11,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export function createChatLogFile(channel) {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
+  const date = DateTime.local();
+  const formattedDate = date.toFormat('yyyyMMdd');
 
-  const filepath = `${__dirname}/../chat-logs/${year}${month}${day}_${channel.substring(1)}.txt`;
+  const filepath = `${__dirname}/../chat-logs/${formattedDate}_${channel.substring(1)}.txt`;
   // Create file if doesn't exist yet, using 'a' flag to avoid overwriting
   fs.closeSync(fs.openSync(filepath, 'a'));
 
   return filepath;
+}
+
+export function logChatMessage(path, username, timestamp, message) {
+  let formattedLine = '';
+  if (timestamp) {
+    const time = DateTime.fromMillis(parseInt(timestamp, 10)).setZone('local');
+    const formattedTime = time.toFormat('yyyy-MM-dd HH:mm:ss');
+    formattedLine = `[${formattedTime}] ${username}: ${message}\n`;
+  } else {
+    // Bot echoed messages do not have a timestamp
+    formattedLine = `[Bot Auto Reply] ${username}: ${message}\n`;
+  }
+
+  fs.appendFile(path, formattedLine, (err) => {
+    if (err) console.log(err);
+  })
 }
 
 export function playFirstMessageSound() {
