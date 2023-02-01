@@ -12,6 +12,7 @@ export default class Chatbot extends Client {
     this.commandMethods = {
       '!bot': this.bot,
       '!commands': this.commands,
+      '!funfact': this.funFact,
       '!game': this.game,
       '!help': this.help,
       '!randomnum': this.randomNum,
@@ -76,6 +77,18 @@ export default class Chatbot extends Client {
     this.say(channel, `Available commands are: ${allCommands}`);
   }
 
+  funFact = (channel) => {
+    helpers.getFunFact()
+      .then((fact) => {
+        if (fact) {
+          this.say(channel, fact);
+        } else {
+          throw new Error;
+        }
+      })
+      .catch(() => this.action(channel, 'could not find a fun fact to share.'));
+  }
+
   game = (channel) => {
     // Get game name, then game IGDB id, then game summary
     helpers.getGameName(channel)
@@ -91,7 +104,7 @@ export default class Chatbot extends Client {
       .then(id => helpers.getGameSummary(id))
       .then((summary) => {
         if (summary) {
-          this.say(channel, `Game summary: ${summary}`);
+          this.say(channel, summary);
         } else {
           throw new Error;
         }

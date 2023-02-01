@@ -49,6 +49,22 @@ export function containsBlockedWord(message) {
   return BLOCKED_WORDS.some(blockedWord => message.includes(blockedWord));
 }
 
+export async function getFunFact() {
+  // Call API Ninjas facts endpoint
+  const url = 'https://api.api-ninjas.com/v1/facts?limit=1';
+
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'X-Api-Key': process.env.API_NINJAS_KEY
+      }
+    });
+    return `${response.data[0].fact}.`;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 export async function getGameName(channel) {
   // Call Twitch Helix API streams endpoint
   const url = `https://api.twitch.tv/helix/streams?type=live&user_login=${channel.substring(1)}`;
