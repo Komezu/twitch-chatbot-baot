@@ -7,6 +7,7 @@ const allCommands = COMMANDS.join(', ');
 export default class Chatbot extends Client {
   constructor(OPTIONS) {
     super(OPTIONS);
+
     // Store method call to each command
     this.commandMethods = {
       '!bot': this.bot,
@@ -16,11 +17,21 @@ export default class Chatbot extends Client {
       '!randomnum': this.randomNum,
       '!recolorbot': this.recolorBot
     };
+
     // Store chatters' message count in a channel for a bot session
     this.messageCount = {};
     OPTIONS.channels.forEach((channel) => {
       // Initialize channel owner's count to 0 to avoid triggering first message sound alert
       this.messageCount[channel] = { [channel.substring(1)]: 0 };
+    })
+  }
+
+  generateChatLogs(channels) {
+    this.chatLogPaths = {};
+    // Create chat log file of the day for each channel and store its location
+    channels.forEach((channel) => {
+      const path = helpers.createChatLogFile(channel);
+      this.chatLogPaths[channel] = path;
     })
   }
 

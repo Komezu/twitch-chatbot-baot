@@ -4,7 +4,9 @@ import * as helpers from './helpers.js';
 import easterEgg from './easter-egg.js';
 
 const chatbot = new Chatbot(OPTIONS);
-chatbot.connect();
+chatbot.connect()
+  .then(() => chatbot.generateChatLogs(OPTIONS.channels))
+  .catch(err => console.log(err));
 
 chatbot.on('join', (channel, username, self) => {
   // Ignore bot joining

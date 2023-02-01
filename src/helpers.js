@@ -1,12 +1,26 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+import fs from 'fs';
 import sound from 'sound-play';
 import axios from 'axios';
 import { BLOCKED_WORDS } from './constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+export function createChatLogFile(channel) {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  const filepath = `${__dirname}/../chat-logs/${year}${month}${day}_${channel.substring(1)}.txt`;
+  // Create file if doesn't exist yet, using 'a' flag to avoid overwriting
+  fs.closeSync(fs.openSync(filepath, 'a'));
+
+  return filepath;
+}
 
 export function playFirstMessageSound() {
   // Set volume: default is 0.5, max is 1
