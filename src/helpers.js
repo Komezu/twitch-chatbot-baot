@@ -59,7 +59,7 @@ export async function getFunFact() {
         'X-Api-Key': process.env.API_NINJAS_KEY
       }
     });
-    return `${response.data[0].fact}.`;
+    return response.data[0].fact;
   } catch(err) {
     console.log(err);
   }
