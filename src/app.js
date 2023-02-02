@@ -33,7 +33,7 @@ chatbot.on('message', (channel, tags, message, self) => {
   if (chatbot.tallyAndFlagFirst(channel, tags.username)) {
     // Play sound if first
     helpers.playFirstMessageSound();
-    chatbot.say(channel, `Welcome to the channel, ${tags.username}! Type !commands for a list of chatbot commands.`)
+    chatbot.say(channel, `Welcome to the channel, @${tags.username}! Type !commands for a list of chatbot commands.`)
   }
 
   // Check if message contains blocked words
@@ -51,4 +51,8 @@ chatbot.on('message', (channel, tags, message, self) => {
 chatbot.on('chat', (channel, _tags, message, _self) => {
   // Execute command if available (not called on actions and whispers)
   chatbot.runCommand(channel, message.toLowerCase());
+});
+
+chatbot.on('disconnected', (reason) => {
+  console.log(reason);
 });
